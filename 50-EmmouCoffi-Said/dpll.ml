@@ -50,9 +50,37 @@ let coloriage = [
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
-let simplifie l clauses =
+
+(* Début des fonctions auxilères pour simplifie *)
+(* Retourne la clause donnée en paramètre sans le littéral l *)
+let rec without_l l clause = 
+  match clause with 
+  | [] -> []
+  | head::rest -> 
+      if head = l then 
+        without_l l rest
+      else
+      head::(without_l l rest) 
+
+(* Simplifie le littéral l dans la clause
+   - si la clause contient l , retourne None 
+   - si la clause contient not l, retourne la clause sans not l 
+   - sinon, retourne la clause sans modification *)
+let simplifie_aux l clause = 
+  if List.mem l clause then 
+    None 
+  else if List.mem (0-l) clause then 
+    Some (without_l (0-l) clause )
+  else
+    Some clause
+
+(* Fin des fonctions auxilières pour simplifie *)
+
+let simplifie l clauses = 
   (* à compléter *)
-  []
+  (* Filter_map inverse l'odre de la liste, donc on réinverse l'ordre 
+  pour obtenir la liste dans l'ordre original *)
+  List.rev (filter_map (simplifie_aux l) clauses)
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -81,17 +109,59 @@ let rec solveur_split clauses interpretation =
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
+
+(* Début des fonctions auxiliaires pour pur *)
+
+(* Retoune la concaténation de deux listes *)
+let rec fusionner_listes liste1 liste2 =
+  match liste1 with
+  | [] -> liste2
+  | tete :: reste -> tete :: fusionner_listes reste liste2
+
+(* Retourne la concaténation des clauses en une seule liste *)
+let rec clauses_into_list clauses = 
+  match clauses with 
+  | [] -> []
+  | head::rest -> fusionner_listes  head (clauses_into_list rest)
+
+(* Retourne un littéral si la tête de l1 est pur à la fois dans l1 et dans l2 
+    sinon, lève une exception  *)
+let rec pur_aux l1 l2 = 
+  match l1 with 
+  | [] -> raise (Failure "pas de littéral pur")
+  | head :: rest -> 
+    if not (List.mem  (0-head) rest) && not (List.mem (0-head) l2) then 
+      head 
+    else
+      pur_aux rest (head::l2)
+
+(* Fin des fonctions auxilières pour pur *)
 let pur clauses =
   (* à compléter *)
-  0
+  try 
+    pur_aux (clauses_into_list clauses) []
+  with
+  | Failure message -> raise (Failure "pas de littéral pur")
 
 (* unitaire : int list list -> int
     - si `clauses' contient au moins une clause unitaire, retourne
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
-let unitaire clauses =
+
+let rec unitaire clauses =
   (* à compléter *)
-  0
+  match clauses with 
+  | [] -> raise (Failure "Not_found")
+  | head::rest -> 
+    (* Si une clause ne contient qu'un seul élément *)
+    if List.length head = 1 then 
+      (* Renvoi de cet élément*)
+      match head with 
+      | [head_bis] -> head_bis
+    else
+      (* Récursion sur la formule, privée de la première clause *)
+      unitaire rest
+  
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
