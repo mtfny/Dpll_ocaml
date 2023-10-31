@@ -183,7 +183,7 @@ let rec solveur_dpll_rec clauses interpretation =
                       with
                         |Failure message -> try solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
                                            with
-                                           |Failure message ->try solveur_dpll_rec (0-(simplifie (first clauses) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
+                                           |Failure message ->try solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
                                                               with
                                                               |Failure message -> "Karibou mwana bahati"
 
