@@ -161,12 +161,27 @@ let rec unitaire clauses =
     else
       (* Récursion sur la formule, privée de la première clause *)
       unitaire rest
-  
+ 
+(*let rec moms l clauses =
+  match clause with
+  | pattern -> pattern*)
+
+let first clauses =
+  match clauses with
+  | [] -> failwith"liste vide"
+  | elem1 :: rest -> elem1
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
-  None
+  try
+    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation)
+  with
+  |Failure message -> try solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)
+                      with
+                      |Failure message -> try solveur_dpll_rec (0-(simplifie (moms clauses) clauses)) ((0-(moms clauses))::interpretation)
+                                           with
+                                          |Failure message -> "Karibou mwana bahati"
 
 
 (* tests *)
