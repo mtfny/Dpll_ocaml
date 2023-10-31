@@ -177,13 +177,15 @@ let first clauses =
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
   try
-    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation)
+    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) (*cas : clause unitaire*)
   with
-  |Failure message -> try solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)
+  |Failure message -> try solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)(*cas : litteral pur*)
                       with
-                      |Failure message -> try solveur_dpll_rec (0-(simplifie (moms clauses) clauses)) ((0-(moms clauses))::interpretation)
+                        |Failure message -> try solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
                                            with
-                                          |Failure message -> "Karibou mwana bahati"
+                                           |Failure message ->try solveur_dpll_rec (0-(simplifie (first clauses) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
+                                                              with
+                                                              |Failure message -> "Karibou mwana bahati"
 
 
 (* tests *)
