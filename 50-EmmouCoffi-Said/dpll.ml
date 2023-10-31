@@ -169,7 +169,9 @@ let rec unitaire clauses =
 let first clauses =
   match clauses with
   | [] -> failwith"liste vide"
-  | elem1 :: rest -> elem1
+  | elem1 :: rest -> match elem1 with
+                    | [] -> failwith "vide"
+                    | tete1 :: reste1 -> tete1
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
