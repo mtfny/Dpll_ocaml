@@ -102,10 +102,13 @@ let rec solveur_split clauses interpretation =
   | _    -> branche
 
 (* tests *)
+(*
 let () = print_modele (solveur_split exemple_3_12 [])
 let () = print_modele (solveur_split exemple_7_2 [])
 let () = print_modele (solveur_split exemple_7_4 [])
 let () = print_modele (solveur_split exemple_7_8 [])
+*)
+
 
 (* let () = print_modele (solveur_split coloriage []) *)
 
@@ -195,21 +198,24 @@ let rec insat clauses =
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
-  if sat clauses then
-    Some interpretation
-    else if insatisfiable clauses then
-      None
-    else
-       ( try
-          solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) (*cas : clause unitaire*)
-        with
-        |Failure message -> try solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)(*cas : litteral pur*)
-                            with
-                              |Failure message -> try solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
-                                                with
-                                                |Failure message ->try solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
+  (* l'ensemble vide de clauses est satisfiable *)
+  if clauses = [] then Some interpretation else
+    (* la clause vide n'est jamais satisfiable *)
+  if mem [] clauses then None else
+    (* branchement *) 
+  try
+    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) (*cas : clause unitaire*)
+  with
+    |Failure message -> try 
+                          solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)(*cas : litteral pur*)
+                        with
+                          |Failure message -> try 
+                                                solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
+                                              with
+                                                |Failure message -> try 
+                                                                      solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
                                                                     with
-                                                                    |Failure message -> "Karibou mwana bahati" )
+                                                                    | Failure message -> None  
 
 let solveur_dpll clauses =
   solveur_dpll_rec clauses []
@@ -217,7 +223,7 @@ let solveur_dpll clauses =
 
 (* tests *)
 (* ----------------------------------------------------------- *)
-(* let () = print_modele (solveur_dpll_rec systeme []) *)
+(* let () = print_modele (solveur_dpll_rec exemple_7_2 []) *)
 (* let () = print_modele (solveur_dpll_rec coloriage []) *)
 
 let () =
