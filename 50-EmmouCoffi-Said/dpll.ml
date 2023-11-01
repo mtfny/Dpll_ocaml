@@ -178,12 +178,41 @@ let first clauses =
   | [] -> failwith"liste vide"
   | elem1 :: rest -> match elem1 with
                     | [] -> failwith "vide"
-                    | tete1 :: reste1 -> tete1
+                    | tete1 :: reste1 -> tete1;;
+(*Fonctions auxiliaires pour le solveur*)
+
+let rec sat clauses =
+  match clauses with
+  | [] -> true
+  |clause :: reste -> if clause = [] then false else sat reste
+
+let rec insat clauses =
+  match clauses with
+  | [] -> true
+  |_ :: _ -> false
+
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* à compléter *)
-  None
+  if sat clauses then
+    Some interpretation
+    else if insatisfiable clauses then
+      None
+    else
+       ( try
+          solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) (*cas : clause unitaire*)
+        with
+        |Failure message -> try solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)(*cas : litteral pur*)
+                            with
+                              |Failure message -> try solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
+                                                with
+                                                |Failure message ->try solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
+                                                                    with
+                                                                    |Failure message -> "Karibou mwana bahati" )
+
+let solveur_dpll clauses =
+  solveur_dpll_rec clauses []
 
 
 (* tests *)
