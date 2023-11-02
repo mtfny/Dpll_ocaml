@@ -217,18 +217,25 @@ let rec solveur_dpll_rec clauses interpretation =
   if mem [] clauses then None else
     (* branchement *) 
   try
-    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) (*cas : clause unitaire*)
+    (*cas : clause unitaire*)
+    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) 
   with
-    |Failure message -> try 
-                          solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)(*cas : litteral pur*)
-                        with
-                          |Failure message -> try 
-                                                solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)(*cas : premier litteral du premier élément *)
-                                              with
-                                                |Failure message -> try 
-                                                                      solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)(*cas : négation du premier litteral du premier élément *)
-                                                                    with
-                                                                    | Failure message -> None  
+    |Failure message -> 
+      try 
+        (*cas : litteral pur*)
+        solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)
+      with
+        |Failure message ->
+          try 
+            (*cas : premier litteral du premier élément *)
+            solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)
+          with
+            |Failure message -> 
+              try 
+                (*cas : négation du premier litteral du premier élément *)
+                solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)
+              with
+                | Failure message -> None  
 
 let solveur_dpll clauses =
   solveur_dpll_rec clauses []
