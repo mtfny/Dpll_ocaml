@@ -218,22 +218,26 @@ let rec solveur_dpll_rec clauses interpretation =
     (* branchement *) 
   try
     (*cas : clause unitaire*)
-    solveur_dpll_rec (simplifie (unitaire clauses) clauses) ((unitaire clauses)::interpretation) 
+    let lit_unitaire = unitaire clauses in 
+    solveur_dpll_rec (simplifie lit_unitaire clauses) (lit_unitaire::interpretation) 
   with
     |Failure message -> 
       try 
         (*cas : litteral pur*)
-        solveur_dpll_rec (simplifie (pur clauses) clauses) ((pur clauses)::interpretation)
+        let lit_pur = pur clauses in
+        solveur_dpll_rec (simplifie lit_pur clauses) (lit_pur::interpretation)
       with
         |Failure message ->
           try 
             (*cas : premier litteral du premier élément *)
-            solveur_dpll_rec (simplifie (first clauses) clauses) ((first clauses)::interpretation)
+            let fst_lit = first clauses in 
+            solveur_dpll_rec (simplifie fst_lit clauses) (fst_lit::interpretation)
           with
             |Failure message -> 
               try 
                 (*cas : négation du premier litteral du premier élément *)
-                solveur_dpll_rec ((simplifie (0-(first clauses)) clauses)) ((0-(first clauses))::interpretation)
+                let not_fst_lit = 0 - first clauses in 
+                solveur_dpll_rec ((simplifie not_fst_lit clauses)) (not_fst_lit::interpretation)
               with
                 | Failure message -> None  
 
