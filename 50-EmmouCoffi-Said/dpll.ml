@@ -47,12 +47,11 @@ let coloriage = [
 
 (* ----------------------------------------------------------- *)
 
-(* simplifie : int -> int list list -> int list list 
-   applique la simplification de l'ensemble des clauses en mettant
-   le littéral l à vrai *)
 
 (* Début des fonctions auxilères pour simplifie *)
-(* Retourne la clause donnée en paramètre sans le littéral l *)
+
+(* without_l : int a list -> int a list
+   Retourne la clause donnée en paramètre sans le littéral l *)
 let rec without_l l clause = 
   match clause with 
   | [] -> []
@@ -62,8 +61,10 @@ let rec without_l l clause =
       else
       head::(without_l l rest) 
 
-(* Simplifie le littéral l dans la clause
+(* simplifie_aux : int a list -> int a list
+  Simplifie le littéral l dans la clause
    - si la clause contient l , retourne None 
+   - si la clause ne contient que not l, retourne la clause vide
    - si la clause contient not l, retourne la clause sans not l 
    - sinon, retourne la clause sans modification *)
 let simplifie_aux l clause = 
@@ -79,11 +80,16 @@ let simplifie_aux l clause =
 
 (* Fin des fonctions auxilières pour simplifie *)
 
+
+(* simplifie : int -> int list list -> int list list 
+   applique la simplification de l'ensemble des clauses en mettant
+   le littéral l à vrai *)
+
 let simplifie l clauses = 
-  (* à compléter *)
   (* Filter_map inverse l'odre de la liste, donc on réinverse l'ordre 
   pour obtenir la liste dans l'ordre original *)
   List.rev (filter_map (simplifie_aux l) clauses)
+
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -115,27 +121,34 @@ let () = print_modele (solveur_split exemple_7_8 [])
 (* solveur dpll récursif *)
 (* ----------------------------------------------------------- *)
 
-(* pur : int list list -> int
-    - si `clauses' contient au moins un littéral pur, retourne
-      ce littéral ;
-    - sinon, lève une exception `Failure "pas de littéral pur"' *)
 
 (* Début des fonctions auxiliaires pour pur *)
 
-(* Retoune la concaténation de deux listes *)
+(* fusionner_listes : int a list -> int a list -> int a list
+   Retoune la concaténation de deux listes *)
+   
 let rec fusionner_listes liste1 liste2 =
   match liste1 with
   | [] -> liste2
   | tete :: reste -> tete :: fusionner_listes reste liste2
 
-(* Retourne la concaténation des clauses en une seule liste *)
+
+(* clauses_into_list : int list list -> int list
+   Retourne la concaténation des clauses en une seule liste *)
+
 let rec clauses_into_list clauses = 
   match clauses with 
   | [] -> []
   | head::rest -> fusionner_listes  head (clauses_into_list rest)
 
-(* Retourne un littéral si la tête de l1 est pur à la fois dans l1 et dans l2 
-    sinon, lève une exception  *)
+
+(*  
+    pur_aux : int list -> int list -> int 
+    - Retourne un littéral 
+      si la tête de l1 est pur à la fois dans l1 et dans l2 
+      (not (tete de l1) n'apparait ni dans l1 ni dans l2 )
+    - sinon, lève une exception  *)
+
 let rec pur_aux l1 l2 = 
   match l1 with 
   | [] -> raise (Failure "pas de littéral pur")
@@ -146,8 +159,14 @@ let rec pur_aux l1 l2 =
       pur_aux rest (head::l2)
 
 (* Fin des fonctions auxilières pour pur *)
+
+
+(* pur : int list list -> int
+    - si `clauses' contient au moins un littéral pur, retourne
+      ce littéral ;
+    - sinon, lève une exception `Failure "pas de littéral pur"' *)
+
 let pur clauses =
-  (* à compléter *)
   try 
     pur_aux (clauses_into_list clauses) []
   with
@@ -159,7 +178,6 @@ let pur clauses =
     - sinon, lève une exception `Not_found' *)
 
 let rec unitaire clauses =
-  (* à compléter *)
   match clauses with 
   | [] -> raise (Failure "Not_found")
   | head::rest -> 
@@ -172,9 +190,14 @@ let rec unitaire clauses =
       (* Récursion sur la formule, privée de la première clause *)
       unitaire rest
   
+
+
+(*Fonctions auxiliaires pour le solveur*)
+
 (*let rec moms l clauses =
   match clause with
   | pattern -> pattern*)
+
 
 let first clauses =
   match clauses with
@@ -182,22 +205,12 @@ let first clauses =
   | elem1 :: rest -> match elem1 with
                     | [] -> failwith "vide"
                     | tete1 :: reste1 -> tete1;;
-(*Fonctions auxiliaires pour le solveur*)
 
-let rec sat clauses =
-  match clauses with
-  | [] -> true
-  |clause :: reste -> if clause = [] then false else sat reste
-
-let rec insat clauses =
-  match clauses with
-  | [] -> true
-  |_ :: _ -> false
+(* Fin des fonctions auxiliaires pour le solveur *)
 
 
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
-  (* à compléter *)
   (* l'ensemble vide de clauses est satisfiable *)
   if clauses = [] then Some interpretation else
     (* la clause vide n'est jamais satisfiable *)
