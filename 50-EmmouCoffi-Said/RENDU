@@ -19,8 +19,7 @@ Questions sur votre code
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
-
+oui `./dpll sudoku-4x4.cnf` donne la réponse attendue
 ---
 
 1. Avez-vous utilisé la fonction `filter_map` (donné dans dpll.ml)
@@ -31,6 +30,15 @@ Questions sur votre code
      fonctionne votre implémentation de `simplifie`.
 
 **à remplir**
+   Pour la fonction `simplifie` nous avons utilisé `filter_map`.
+
+   D'abord nous appelons `simplifie_aux`qui simplifie le littéral l dans la clause
+   - si la clause contient l , retourne None 
+   - si la clause contient not l, retourne la clause sans not l grace à `without_l`qui retourne la clause donnée en paramètre sans le littéral l
+   - si la clause ne contient que not l, retourne la clause vide
+   - sinon, retourne la clause sans modification
+   
+   Filter_map inverse l'odre de la liste, donc on réinverse l'ordre avec `List.rev` pour obtenir la liste dans l'ordre original
 
 ---
 
@@ -45,6 +53,12 @@ Questions sur votre code
 
 **à remplir**
 
+   Pour `unitaire` :
+   - Si la liste de clauses est vide ([]),il n'y a pas de litteral unitaire on leve un message d'erreur 
+   - Si la liste de clauses n'est pas vide,on vérifie si la longueur de cette clause est égale à 1 en utilisant `List.length`
+   - Sinon, on cherche récursivement une clause unitaire dans le reste de la liste de clause
+   À la fin si aucune clause unitaire n'est trouvée, une excepetion est donc levée.
+
 ---
 
 3. Pour l'implémentation de `pur`, quelles sont les fonctions
@@ -53,6 +67,8 @@ Questions sur votre code
    utilisées dans votre implémentation de la fonction `pur`.
 
 **à remplir**
+
+   Pour `pur`:
 
 ---
 
