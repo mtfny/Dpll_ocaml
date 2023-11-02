@@ -19,8 +19,7 @@ Questions sur votre code
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
-
+oui `./dpll sudoku-4x4.cnf` donne la réponse attendue
 ---
 
 1. Avez-vous utilisé la fonction `filter_map` (donné dans dpll.ml)
@@ -31,6 +30,15 @@ Questions sur votre code
      fonctionne votre implémentation de `simplifie`.
 
 **à remplir**
+   Pour la fonction `simplifie` nous avons utilisé `filter_map`.
+
+   D'abord nous appelons `simplifie_aux`qui simplifie le littéral l dans la clause
+   - si la clause contient l , retourne None 
+   - si la clause contient not l, retourne la clause sans not l grace à `without_l`qui retourne la clause donnée en paramètre sans le littéral l
+   - si la clause ne contient que not l, retourne la clause vide
+   - sinon, retourne la clause sans modification
+   
+   Filter_map inverse l'odre de la liste, donc on réinverse l'ordre avec `List.rev` pour obtenir la liste dans l'ordre original
 
 ---
 
@@ -45,6 +53,12 @@ Questions sur votre code
 
 **à remplir**
 
+   Pour `unitaire` :
+   - Si la liste de clauses est vide ([]),il n'y a pas de litteral unitaire on leve un message d'erreur 
+   - Si la liste de clauses n'est pas vide,on vérifie si la longueur de cette clause est égale à 1 en utilisant `List.length`
+   - Sinon, on cherche récursivement une clause unitaire dans le reste de la liste de clause
+   À la fin si aucune clause unitaire n'est trouvée, une excepetion est donc levée.
+
 ---
 
 3. Pour l'implémentation de `pur`, quelles sont les fonctions
@@ -53,6 +67,14 @@ Questions sur votre code
    utilisées dans votre implémentation de la fonction `pur`.
 
 **à remplir**
+
+   Pour `pur`:
+   -`fusionner_listes` prend deux listes (liste1 et liste2) et les concatène. Elle itère sur les éléments de liste1. Cette foncion concatène les clauses en une seule liste
+   - `clauses_into_list` prend une liste de clauses et les concatène en une seule liste d'entiers en utilisant la fonction `fusionner_listes` 
+   -`pur_aux` est la fonction auxiliaire qui cherche un littéral pur. Elle prend deux listes, l1 et l2, où l1 est supposée être la liste de tous les littéraux de la formule et l2 est la liste des littéraux déjà vus. La fonction itère sur l1 on bérifie qu'un literal qu'il n'apparaît pas à la fois dans sa forme positive et négative à la fois dans l1 et l2
+   -Si un littéral pur est trouvé, il est renvoyé. Sinon, la fonction continue de chercher. Si aucun littéral pur n'est trouvé, elle lève une exception "pas de littéral pur".
+
+   `pur` prend une liste de clauses et l'utilise pour appeler `pur_aux`
 
 ---
 

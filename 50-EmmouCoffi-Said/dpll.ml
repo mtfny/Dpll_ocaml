@@ -202,9 +202,11 @@ let rec unitaire clauses =
 let first clauses =
   match clauses with
   | [] -> failwith"liste vide"
-  | elem1 :: rest -> match elem1 with
+  | clause :: _ -> match clause with
                     | [] -> failwith "vide"
-                    | tete1 :: reste1 -> tete1;;
+                    | [lit] -> lit
+                    | lit :: _ -> lit
+
 
 (* Fin des fonctions auxiliaires pour le solveur *)
 
@@ -212,9 +214,10 @@ let first clauses =
 (* solveur_dpll_rec : int list list -> int list -> int list option *)
 let rec solveur_dpll_rec clauses interpretation =
   (* l'ensemble vide de clauses est satisfiable *)
-  if clauses = [] then Some interpretation else
+  if clauses = [] then Some interpretation 
+  
     (* la clause vide n'est jamais satisfiable *)
-  if mem [] clauses then None else
+  else if mem [] clauses then None else
     (* branchement *) 
   try
     (*cas : clause unitaire*)
