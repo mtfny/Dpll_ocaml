@@ -91,7 +91,7 @@ oui `./dpll sudoku-4x4.cnf` donne la réponse attendue
                                     [1,-1,3] 
                                     []
    
-   `solveur_split` fais les recherches en fonctions du premier élément et ``solveur_dpll_rec`` utilise des regles pour faire la résolution
+   `solveur_split` fais les recherches en fonctions du premier literal de la première clause et ``solveur_dpll_rec`` utilise des regles (unitaire et pur) pour faire la résolution
 
 ---
 
