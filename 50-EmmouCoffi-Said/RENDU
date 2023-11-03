@@ -83,6 +83,15 @@ oui `./dpll sudoku-4x4.cnf` donne la réponse attendue
    différent, et expliquez les différences entre ces deux fonctions.
 
 **à remplir**
+   Nous pouvons prendre `èxemple_7_2`:
+   - Avec `solveur_split` : [[1,-1,3][-2,-3][-2]]
+                           [-2,-3][-2]
+                           []
+   -Avec `solveur_dpll_rec` :     [[1,-1,3][-2,-3][-2]]        
+                                    [1,-1,3] 
+                                    []
+   
+   `solveur_split` fais les recherches en fonctions du premier élément et ``solveur_dpll_rec`` utilise des regles pour faire la résolution
 
 ---
 
